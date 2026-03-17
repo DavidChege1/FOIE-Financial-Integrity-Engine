@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # 1. THE DATABASE (Financial Data Storage & Airflow Backend)
+  postgres:
+    image: postgres:15-alpine
+    container_name: foie_postgres
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=foie_db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d foie_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. THE ORCHESTRATOR (Apache Airflow)
+  airflow:
+    image: apache/airflow:2.7.1-python3.10
+    container_name: foie_airflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/foie_db
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas numpy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: standalone
+
+  foie_api:
+    image: python:3.10-slim
+    container_name: foie_api
+    volumes:
+      - ./api:/app
+    working_dir: /app
+    command: >
+      sh -c "pip install fastapi uvicorn psycopg2-binary && 
+             uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  foie_dashboard:
+    image: python:3.10-slim
+    container_name: foie_dashboard
+    volumes:
+      - ./dashboard:/app
+    working_dir: /app
+    command: >
+      sh -c "pip install streamlit pandas psycopg2-binary plotly && 
+             streamlit run app.py --server.port=8501 --server.address=0.0.0.0"
+    ports:
+      - "8501:8501"
+    depends_on:
+      - postgres
