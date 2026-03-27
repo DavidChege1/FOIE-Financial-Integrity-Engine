@@ -24,6 +24,14 @@ The platform is fully containerized and runs on a 5-tier architecture:
 - **Full Audit Trail:** Every manual edit is logged in a dedicated audit table, ensuring compliance with standard accounting practices (ACCA/SOX).
 - **Type-Safe Casting:** Robust handling of data-type mismatches between Pandas-inferred types and strict PostgreSQL schemas.
 
+## 🖥️ Interface Previews
+
+### 📊 Audit & Repair Workbench (Streamlit)
+![FOIE Dashboard](img/dashboard.png)
+
+### ⚙️ Workflow Orchestration (Apache Airflow)
+![Airflow UI](img/airflow.png)
+
 ## 🛠️ Quick Start (Docker)
 
 Ensure you have Docker and Docker-Compose installed on your machine (Tested on Windows 10 IoT LTSC via WSL2).
@@ -38,7 +46,7 @@ cd FOIE-Financial-Integrity-Engine
 **2. Spin up the Infrastructure:**
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 **3. Generate Initial Data:**
