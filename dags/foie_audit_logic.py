@@ -29,6 +29,22 @@ with DAG(
             flag_reason TEXT,
             flagged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+
+        CREATE TABLE IF NOT EXISTS fct_gold.audit_log (
+            order_id TEXT,
+            new_unit_cost NUMERIC,
+            repaired_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS fct_gold.orders_final (
+            order_id TEXT,
+            sku_code TEXT,
+            quantity NUMERIC,
+            unit_cost NUMERIC,
+            supplier_id TEXT,
+            timestamp TIMESTAMP,
+            repaired_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
         """
     )
 
