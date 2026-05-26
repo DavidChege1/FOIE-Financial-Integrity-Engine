@@ -2,10 +2,17 @@ from fastapi import FastAPI, HTTPException
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from pydantic import BaseModel
+import os
 
 app = FastAPI(title="FOIE Financial Integrity API")
 
-DB_CONFIG = {"host": "postgres", "database": "foie_db", "user": "airflow", "password": "airflow", "port": 5432}
+DB_CONFIG = {
+    "host": os.environ.get("POSTGRES_HOST", "postgres"),
+    "database": os.environ.get("POSTGRES_DB", "foie_db"),
+    "user": os.environ.get("POSTGRES_USER", "airflow"),
+    "password": os.environ.get("POSTGRES_PASSWORD", "airflow"),
+    "port": int(os.environ.get("POSTGRES_PORT", 5432))
+}
 
 class RepairRequest(BaseModel):
     order_id: str

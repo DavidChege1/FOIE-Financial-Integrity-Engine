@@ -3,12 +3,19 @@ import pandas as pd
 import psycopg2
 import requests
 import plotly.express as px
+import os
 
 st.set_page_config(page_title="FOIE Audit Workbench", layout="wide")
 
+DB_HOST = os.environ.get("POSTGRES_HOST", "postgres")
+DB_NAME = os.environ.get("POSTGRES_DB", "foie_db")
+DB_USER = os.environ.get("POSTGRES_USER", "airflow")
+DB_PASS = os.environ.get("POSTGRES_PASSWORD", "airflow")
+DB_PORT = os.environ.get("POSTGRES_PORT", "5432")
+
 # DB Connection Helper
 def get_data(query):
-    conn = psycopg2.connect(host="postgres", database="foie_db", user="airflow", password="airflow")
+    conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASS, port=DB_PORT)
     df = pd.read_sql(query, conn)
     conn.close()
     return df
@@ -38,7 +45,7 @@ if not quarantine_list.empty:
             
             if response.status_code == 200:
                 # Log the edit manually into our new audit table
-                conn = psycopg2.connect(host="postgres", database="foie_db", user="airflow", password="airflow")
+                conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASS, port=DB_PORT)
                 cur = conn.cursor()
                 cur.execute(
                     "INSERT INTO fct_gold.audit_log (order_id, new_unit_cost) VALUES (%s, %s)",

@@ -1,6 +1,41 @@
+# Virtual Environments
+.venv/
 venv/
+ENV/
+env/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+*.cert
+*.pfx
+
+# Python Cache & System Files
 __pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Data & Database Logs/Dumps
 *.csv
 *.log
+*.sql
+*.sqlite
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
 .DS_Store
-.env
+Thumbs.db
+desktop.ini
